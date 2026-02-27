@@ -1,13 +1,37 @@
 export const CONTACT_EMAIL = "mike@kperformance.uk";
 export const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}`;
+export const mailto = (subject: string, body: string) =>
+  `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
 export const heroCopy = {
   eyebrow: "Youth Athlete Performance Coaching",
   title: "Build speed, confidence, and game-ready movement.",
   description:
-    "Structured coaching for young athletes who want to perform better in their sport and develop the habits that sustain long-term progress.",
-  primaryCta: "Book a performance call",
-  secondaryCta: "Ask a quick question",
+    "Structured coaching for young athletes in any sport, from beginner to high performers, who want to perform better and develop habits that sustain long-term progress.",
+  primaryCta: {
+    label: "Enquire about coaching",
+    subject: "K Performance coaching enquiry",
+    body: `Hi Mike,
+
+I would like to enquire about coaching.
+
+Athlete age:
+Sport:
+Current training:
+Main goal:
+Preferred times:
+
+Thanks,`,
+  },
+  secondaryCta: {
+    label: "Ask a quick question",
+    subject: "Quick question — K Performance",
+    body: `Hi Mike,
+
+I have a quick question:
+
+Thanks,`,
+  },
 };
 
 export const pillars = [

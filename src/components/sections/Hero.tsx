@@ -1,21 +1,13 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { CONTACT_MAILTO, heroCopy } from "../../content/copy";
+import { motion, useReducedMotion } from "framer-motion";
+import { heroCopy, mailto } from "../../content/copy";
 
 const EnergyLinesHero = lazy(() => import("../three/EnergyLinesHero"));
 
 function Hero() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [shouldLoadScene, setShouldLoadScene] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotionPreference = () => setReduceMotion(mediaQuery.matches);
-    updateMotionPreference();
-    mediaQuery.addEventListener("change", updateMotionPreference);
-    return () => mediaQuery.removeEventListener("change", updateMotionPreference);
-  }, []);
+  const prefersReducedMotion = useReducedMotion() ?? false;
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -38,9 +30,9 @@ function Hero() {
       className="relative isolate min-h-screen overflow-hidden border-b border-neutral-800"
       aria-label="Hero"
     >
-      <div className="absolute inset-0 -z-20 bg-gradient-to-b from-neutral-900 via-neutral-950 to-black" />
-      <div className="absolute inset-0 -z-10">
-        {reduceMotion ? (
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-neutral-900 via-neutral-950 to-black" />
+      <div className="absolute inset-0 z-10">
+        {prefersReducedMotion ? (
           <div
             className="h-full w-full bg-[radial-gradient(circle_at_20%_20%,rgba(249,115,22,0.25),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(251,146,60,0.18),transparent_35%)]"
             aria-hidden
@@ -57,12 +49,16 @@ function Hero() {
           <div className="h-full w-full bg-[radial-gradient(circle_at_20%_20%,rgba(249,115,22,0.22),transparent_40%),radial-gradient(circle_at_80%_70%,rgba(251,146,60,0.16),transparent_35%)]" />
         )}
       </div>
+      <div
+        className="pointer-events-none absolute inset-0 z-20 bg-black/30 backdrop-blur-[1px]"
+        aria-hidden
+      />
 
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-24 sm:px-10">
+      <div className="relative z-30 mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-24 sm:px-10">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={prefersReducedMotion ? false : { opacity: 1, y: 0 }}
+          transition={prefersReducedMotion ? undefined : { duration: 0.55, ease: "easeOut" }}
           className="max-w-3xl"
         >
           <p className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-ember-300">
@@ -76,16 +72,16 @@ function Hero() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
-              href={CONTACT_MAILTO}
-              className="rounded-md bg-ember-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-ember-400"
+              href={mailto(heroCopy.primaryCta.subject, heroCopy.primaryCta.body)}
+              className="rounded-md bg-ember-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-ember-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              {heroCopy.primaryCta}
+              {heroCopy.primaryCta.label}
             </a>
             <a
-              href={CONTACT_MAILTO}
-              className="rounded-md border border-neutral-600 px-6 py-3 text-sm font-semibold text-neutral-100 transition hover:border-ember-400 hover:text-ember-300"
+              href={mailto(heroCopy.secondaryCta.subject, heroCopy.secondaryCta.body)}
+              className="rounded-md border border-neutral-600 px-6 py-3 text-sm font-semibold text-neutral-100 transition hover:border-ember-400 hover:text-ember-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             >
-              {heroCopy.secondaryCta}
+              {heroCopy.secondaryCta.label}
             </a>
           </div>
         </motion.div>
